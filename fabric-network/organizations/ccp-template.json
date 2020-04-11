@@ -1,0 +1,49 @@
+{
+    "name": "first-network-vol${ORG}",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Vol${ORG}",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "Vol${ORG}": {
+            "mspid": "Vol${ORG}MSP",
+            "peers": [
+                "peer0.vol${ORG}.example.com"
+            ],
+            "certificateAuthorities": [
+                "ca.vol${ORG}.example.com"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.vol${ORG}.example.com": {
+            "url": "grpcs://localhost:${P0PORT}",
+            "tlsCACerts": {
+                "pem": "${PEERPEM}"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.vol${ORG}.example.com",
+                "hostnameOverride": "peer0.vol${ORG}.example.com"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.vol${ORG}.example.com": {
+            "url": "https://localhost:${CAPORT}",
+            "caName": "ca-vol${ORG}",
+            "tlsCACerts": {
+                "pem": "${CAPEM}"
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}
