@@ -1,0 +1,6 @@
+# up & createChannel 
+fabric-network/channel-artifacts/
+fabric-network/log.txt
+fabric-network/organizations/ordererOrganizations/
+fabric-network/organizations/peerOrganizations/
+fabric-network/system-genesis-block/
