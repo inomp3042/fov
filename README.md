@@ -10,3 +10,6 @@ cd ./fabric-network
 
 ### fabric network & chaincode 삭제
 ./network.sh down
+
+### up, createChannel, deployCC
+./network.sh start
