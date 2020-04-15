@@ -4,3 +4,6 @@ fabric-network/log.txt
 fabric-network/organizations/ordererOrganizations/
 fabric-network/organizations/peerOrganizations/
 fabric-network/system-genesis-block/
+
+# fov nodejs
+chaincode/fov/javascript/node_modules/
