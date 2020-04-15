@@ -559,6 +559,10 @@ elif [ "${MODE}" == "down" ]; then
 elif [ "${MODE}" == "restart" ]; then
   networkDown
   networkUp
+elif [ "${MODE}" == "start" ]; then
+  networkUp
+  createChannel
+  deployCC
 else
   printHelp
   exit 1
