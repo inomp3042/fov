@@ -57,8 +57,8 @@ packageChaincode() {
   res=$?
   set +x
   cat log.txt
-  verifyResult $res "Chaincode packaging on peer0.vol${ORG} has failed"
-  echo "===================== Chaincode is packaged on peer0.vol${ORG} ===================== "
+  verifyResult $res "Chaincode packaging on $PEER has failed"
+  echo "===================== Chaincode is packaged on $PEER ===================== "
   echo
 }
 
@@ -71,8 +71,8 @@ installChaincode() {
   res=$?
   set +x
   cat log.txt
-  verifyResult $res "Chaincode installation on peer0.vol${ORG} has failed"
-  echo "===================== Chaincode is installed on peer0.vol${ORG} ===================== "
+  verifyResult $res "Chaincode installation on $PEER has failed"
+  echo "===================== Chaincode is installed on $PEER ===================== "
   echo
 }
 
@@ -86,9 +86,9 @@ queryInstalled() {
   set +x
   cat log.txt
 	PACKAGE_ID=$(sed -n "/fov_${VERSION}/{s/^Package ID: //; s/, Label:.*$//; p;}" log.txt)
-  verifyResult $res "Query installed on peer0.vol${ORG} has failed"
+  verifyResult $res "Query installed on $PEER has failed"
   echo PackageID is ${PACKAGE_ID}
-  echo "===================== Query installed successful on peer0.vol${ORG} on channel ===================== "
+  echo "===================== Query installed successful on $PEER on channel ===================== "
   echo
 }
 
@@ -107,8 +107,8 @@ approveForMyOrg() {
     set +x
   fi
   cat log.txt
-  verifyResult $res "Chaincode definition approved on peer0.vol${ORG} on channel '$CHANNEL_NAME' failed"
-  echo "===================== Chaincode definition approved on peer0.vol${ORG} on channel '$CHANNEL_NAME' ===================== "
+  verifyResult $res "Chaincode definition approved on $PEER on channel '$CHANNEL_NAME' failed"
+  echo "===================== Chaincode definition approved on $PEER on channel '$CHANNEL_NAME' ===================== "
   echo
 }
 
@@ -117,14 +117,14 @@ checkCommitReadiness() {
   ORG=$1
   shift 1
   setGlobals $ORG
-  echo "===================== Checking the commit readiness of the chaincode definition on peer0.vol${ORG} on channel '$CHANNEL_NAME'... ===================== "
+  echo "===================== Checking the commit readiness of the chaincode definition on $PEER on channel '$CHANNEL_NAME'... ===================== "
 	local rc=1
 	local COUNTER=1
 	# continue to poll
   # we either get a successful response, or reach MAX RETRY
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
     sleep $DELAY
-    echo "Attempting to check the commit readiness of the chaincode definition on peer0.vol${ORG} secs"
+    echo "Attempting to check the commit readiness of the chaincode definition on $PEER secs"
     set -x
     peer lifecycle chaincode checkcommitreadiness --channelID $CHANNEL_NAME --name fov --version ${VERSION} --sequence ${VERSION} --output json --init-required >&log.txt
     res=$?
@@ -139,9 +139,9 @@ checkCommitReadiness() {
 	done
   cat log.txt
   if test $rc -eq 0; then
-    echo "===================== Checking the commit readiness of the chaincode definition successful on peer0.vol${ORG} on channel '$CHANNEL_NAME' ===================== "
+    echo "===================== Checking the commit readiness of the chaincode definition successful on $PEER on channel '$CHANNEL_NAME' ===================== "
   else
-    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Check commit readiness result on peer0.vol${ORG} is INVALID !!!!!!!!!!!!!!!!"
+    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Check commit readiness result on $PEER is INVALID !!!!!!!!!!!!!!!!"
     echo "================== ERROR !!! FAILED to execute End-2-End Scenario =================="
     echo
     exit 1
@@ -169,7 +169,7 @@ commitChaincodeDefinition() {
     set +x
   fi
   cat log.txt
-  verifyResult $res "Chaincode definition commit failed on peer0.vol${ORG} on channel '$CHANNEL_NAME' failed"
+  verifyResult $res "Chaincode definition commit failed on $PEER on channel '$CHANNEL_NAME' failed"
   echo "===================== Chaincode definition committed on channel '$CHANNEL_NAME' ===================== "
   echo
 }
@@ -179,14 +179,14 @@ queryCommitted() {
   ORG=$1
   setGlobals $ORG
   EXPECTED_RESULT="Version: ${VERSION}, Sequence: ${VERSION}, Endorsement Plugin: escc, Validation Plugin: vscc"
-  echo "===================== Querying chaincode definition on peer0.vol${ORG} on channel '$CHANNEL_NAME'... ===================== "
+  echo "===================== Querying chaincode definition on $PEER on channel '$CHANNEL_NAME'... ===================== "
 	local rc=1
 	local COUNTER=1
 	# continue to poll
   # we either get a successful response, or reach MAX RETRY
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
     sleep $DELAY
-    echo "Attempting to Query committed status on peer0.vol${ORG}, Retry after $DELAY seconds."
+    echo "Attempting to Query committed status on $PEER, Retry after $DELAY seconds."
     set -x
     peer lifecycle chaincode querycommitted --channelID $CHANNEL_NAME --name fov >&log.txt
     res=$?
@@ -198,10 +198,10 @@ queryCommitted() {
   echo
   cat log.txt
   if test $rc -eq 0; then
-    echo "===================== Query chaincode definition successful on peer0.vol${ORG} on channel '$CHANNEL_NAME' ===================== "
+    echo "===================== Query chaincode definition successful on $PEER on channel '$CHANNEL_NAME' ===================== "
 		echo
   else
-    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Query chaincode definition result on peer0.vol${ORG} is INVALID !!!!!!!!!!!!!!!!"
+    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Query chaincode definition result on $PEER is INVALID !!!!!!!!!!!!!!!!"
     echo
     exit 1
   fi
@@ -260,14 +260,14 @@ chaincodeInvoke() {
 chaincodeQuery() {
   ORG=$1
   setGlobals $ORG
-  echo "===================== Querying on peer0.vol${ORG} on channel '$CHANNEL_NAME'... ===================== "
+  echo "===================== Querying on $PEER on channel '$CHANNEL_NAME'... ===================== "
 	local rc=1
 	local COUNTER=1
 	# continue to poll
   # we either get a successful response, or reach MAX RETRY
 	while [ $rc -ne 0 -a $COUNTER -lt $MAX_RETRY ] ; do
     sleep $DELAY
-    echo "Attempting to Query peer0.vol${ORG} ...$(($(date +%s) - starttime)) secs"
+    echo "Attempting to Query $PEER ...$(($(date +%s) - starttime)) secs"
     set -x
     peer chaincode query -C $CHANNEL_NAME -n fov -c '{"Args":["queryAllVolents"]}' >&log.txt
     res=$?
@@ -278,10 +278,10 @@ chaincodeQuery() {
   echo
   cat log.txt
   if test $rc -eq 0; then
-    echo "===================== Query successful on peer0.vol${ORG} on channel '$CHANNEL_NAME' ===================== "
+    echo "===================== Query successful on $PEER on channel '$CHANNEL_NAME' ===================== "
 		echo
   else
-    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Query result on peer0.vol${ORG} is INVALID !!!!!!!!!!!!!!!!"
+    echo "!!!!!!!!!!!!!!! After $MAX_RETRY attempts, Query result on $PEER is INVALID !!!!!!!!!!!!!!!!"
     echo
     exit 1
   fi
@@ -295,6 +295,8 @@ echo "Installing chaincode on peer0.vol1..."
 installChaincode 1
 echo "Install chaincode on peer0.vol2..."
 installChaincode 2
+echo "Install chaincode on peer0.con1..."
+installChaincode 3
 
 ## query whether the chaincode is installed
 queryInstalled 1
@@ -304,31 +306,43 @@ approveForMyOrg 1
 
 ## check whether the chaincode definition is ready to be committed
 ## expect vol1 to have approved and vol2 not to
-checkCommitReadiness 1 "\"Vol1MSP\": true" "\"Vol2MSP\": false"
-checkCommitReadiness 2 "\"Vol1MSP\": true" "\"Vol2MSP\": false"
+checkCommitReadiness 1 "\"Vol1MSP\": true" "\"Vol2MSP\": false" "\"Con1MSP\": false"
+checkCommitReadiness 2 "\"Vol1MSP\": true" "\"Vol2MSP\": false" "\"Con1MSP\": false"
+checkCommitReadiness 3 "\"Vol1MSP\": true" "\"Vol2MSP\": false" "\"Con1MSP\": false"
 
 ## now approve also for vol2
 approveForMyOrg 2
 
 ## check whether the chaincode definition is ready to be committed
 ## expect them both to have approved
-checkCommitReadiness 1 "\"Vol1MSP\": true" "\"Vol2MSP\": true"
-checkCommitReadiness 2 "\"Vol1MSP\": true" "\"Vol2MSP\": true"
+checkCommitReadiness 1 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": false"
+checkCommitReadiness 2 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": false"
+checkCommitReadiness 3 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": false"
+
+## now approve also for con1
+approveForMyOrg 3
+
+## check whether the chaincode definition is ready to be committed
+## expect them both to have approved
+checkCommitReadiness 1 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": true"
+checkCommitReadiness 2 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": true"
+checkCommitReadiness 3 "\"Vol1MSP\": true" "\"Vol2MSP\": true" "\"Con1MSP\": true"
 
 ## now that we know for sure both vols have approved, commit the definition
-commitChaincodeDefinition 1 2
+commitChaincodeDefinition 1 2 3
 
 ## query on both vols to see that the definition committed successfully
 queryCommitted 1
 queryCommitted 2
+queryCommitted 3
 
 ## Invoke the chaincode
-chaincodeInvokeInit 1 2
+chaincodeInvokeInit 1 2 3
 
 sleep 10
 
 ## Invoke the chaincode
-chaincodeInvoke 1 2
+chaincodeInvoke 1 2 3
 
 # Query chaincode on peer0.vol1
 echo "Querying chaincode on peer0.vol1..."

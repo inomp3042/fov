@@ -6,6 +6,7 @@ function printHelp() {
     echo "    <Mode>"
     echo "      - 'vol1' - export vol1 environment variable"
     echo "      - 'vol2' - export vol2 environment variable"
+    echo "      - 'con1' - export con1 environment variable"
 }
 
 function exportVol1() {
@@ -31,6 +32,18 @@ function exportVol2() {
     export CORE_PEER_ADDRESS=localhost:9051
     echo "================ End Vol2 ================"
 }
+
+function exportCon1() {
+    echo "================ Con1 ================"
+    export FABRIC_CFG_PATH=$PWD/../config/
+    export CORE_PEER_TLS_ENABLED=true
+    export CORE_PEER_LOCALMSPID="Con1MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/con1.example.com/peers/peer0.con1.example.com/tls/ca.crt
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/con1.example.com/users/Admin@con1.example.com/msp
+    export CORE_PEER_ADDRESS=localhost:11051
+    echo "================ End Con1 ================"
+}
+
 ## Parse mode
 if [[ $# -lt 1 ]] ; then
   printHelp
@@ -44,4 +57,6 @@ if [ "${MODE}" == "vol1" ]; then
   exportVol1
 elif [ "${MODE}" == "vol2" ]; then
   exportVol2
+elif [ "${MODE}" == "con1" ]; then
+  exportCon1
 fi

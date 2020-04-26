@@ -33,7 +33,7 @@ createChannelTx() {
 
 createAncorPeerTx() {
 
-	for volmsp in Vol1MSP Vol2MSP; do
+	for volmsp in Vol1MSP Vol2MSP Con1MSP; do
 
 	echo "#######    Generating anchor peer update for ${volmsp}  ##########"
 	set -x
@@ -95,7 +95,7 @@ joinChannel() {
 	done
 	cat log.txt
 	echo
-	verifyResult $res "After $MAX_RETRY attempts, peer0.vol${ORG} has failed to join channel '$CHANNEL_NAME' "
+	verifyResult $res "After $MAX_RETRY attempts, $PEER has failed to join channel '$CHANNEL_NAME' "
 }
 
 updateAnchorPeers() {
@@ -146,16 +146,20 @@ echo "Creating channel "$CHANNEL_NAME
 createChannel
 
 ## Join all the peers to the channel
-echo "Join Org1 peers to the channel..."
+echo "Join Vol1 peers to the channel..."
 joinChannel 1
-echo "Join Org2 peers to the channel..."
+echo "Join Vol2 peers to the channel..."
 joinChannel 2
+echo "Join Con1 peers to the channel..."
+joinChannel 3
 
 ## Set the anchor peers for each org in the channel
 echo "Updating anchor peers for vol1..."
 updateAnchorPeers 1
 echo "Updating anchor peers for vol2..."
 updateAnchorPeers 2
+echo "Updating anchor peers for con2..."
+updateAnchorPeers 3
 
 echo
 echo "========= Channel successfully joined =========== "

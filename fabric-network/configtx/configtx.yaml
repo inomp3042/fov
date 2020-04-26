@@ -110,6 +110,39 @@ Organizations:
             - Host: peer0.vol2.example.com
               Port: 9051
 
+    - &Con1
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Con1MSP
+
+        # ID to load the MSP definition as
+        ID: Con1MSP
+
+        MSPDir: ../organizations/peerOrganizations/con1.example.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Con1MSP.admin', 'Con1MSP.peer', 'Con1MSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Con1MSP.admin', 'Con1MSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Con1MSP.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('Con1MSP.peer')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.con1.example.com
+              Port: 11051
 ################################################################################
 #
 #   SECTION: Capabilities
@@ -321,6 +354,7 @@ Profiles:
                 Organizations:
                     - *Vol1
                     - *Vol2
+                    - *Con1
     TwoOrgsChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
@@ -329,5 +363,6 @@ Profiles:
             Organizations:
                 - *Vol1
                 - *Vol2
+                - *Con1
             Capabilities:
                 <<: *ApplicationCapabilities

@@ -10,7 +10,8 @@ export CORE_PEER_TLS_ENABLED=true
 export ORDERER_CA=${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 export PEER0_VOL1_CA=${PWD}/organizations/peerOrganizations/vol1.example.com/peers/peer0.vol1.example.com/tls/ca.crt
 export PEER0_VOL2_CA=${PWD}/organizations/peerOrganizations/vol2.example.com/peers/peer0.vol2.example.com/tls/ca.crt
-export PEER0_VOL3_CA=${PWD}/organizations/peerOrganizations/vol3.example.com/peers/peer0.vol3.example.com/tls/ca.crt
+export PEER0_CON1_CA=${PWD}/organizations/peerOrganizations/con1.example.com/peers/peer0.con1.example.com/tls/ca.crt
+# export PEER0_VOL3_CA=${PWD}/organizations/peerOrganizations/vol3.example.com/peers/peer0.vol3.example.com/tls/ca.crt
 
 # Set OrdererOrg.Admin globals
 setOrdererGlobals() {
@@ -33,17 +34,23 @@ setGlobals() {
     export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_VOL1_CA
     export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/vol1.example.com/users/Admin@vol1.example.com/msp
     export CORE_PEER_ADDRESS=localhost:7051
+    export PEER="peer0.vol1"
+    export VOL_CON="$PEER0_VOL1_CA"
   elif [ $USING_ORG -eq 2 ]; then
     export CORE_PEER_LOCALMSPID="Vol2MSP"
     export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_VOL2_CA
     export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/vol2.example.com/users/Admin@vol2.example.com/msp
     export CORE_PEER_ADDRESS=localhost:9051
+    export PEER="peer0.vol2"
+    export VOL_CON="$PEER0_VOL2_CA"
 
   elif [ $USING_ORG -eq 3 ]; then
-    export CORE_PEER_LOCALMSPID="Vol3MSP"
-    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_VOL3_CA
-    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/vol3.example.com/users/Admin@vol3.example.com/msp
+    export CORE_PEER_LOCALMSPID="Con1MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_CON1_CA
+    export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/con1.example.com/users/Admin@con1.example.com/msp
     export CORE_PEER_ADDRESS=localhost:11051
+    export PEER="peer0.con1"
+    export VOL_CON="$PEER0_CON1_CA"
   else
     echo "================== ERROR !!! ORG Unknown =================="
   fi
@@ -64,11 +71,10 @@ parsePeerConnectionParameters() {
   PEERS=""
   while [ "$#" -gt 0 ]; do
     setGlobals $1
-    PEER="peer0.vol$1"
     PEERS="$PEERS $PEER"
     PEER_CONN_PARMS="$PEER_CONN_PARMS --peerAddresses $CORE_PEER_ADDRESS"
     if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "true" ]; then
-      TLSINFO=$(eval echo "--tlsRootCertFiles \$PEER0_VOL$1_CA")
+      TLSINFO=$(eval echo "--tlsRootCertFiles \$VOL_CON")
       PEER_CONN_PARMS="$PEER_CONN_PARMS $TLSINFO"
     fi
     # shift by two to get the next pair of peer/org parameters
