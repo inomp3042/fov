@@ -64,7 +64,7 @@ CAPEM=organizations/peerOrganizations/vol2.example.com/ca/ca.vol2.example.com-ce
 echo "$(json_ccp $ORG $P0PORT $CAPORT $PEERPEM $CAPEM)" > organizations/peerOrganizations/vol2.example.com/connection-vol2.json
 echo "$(yaml_ccp $ORG $P0PORT $CAPORT $PEERPEM $CAPEM)" > organizations/peerOrganizations/vol2.example.com/connection-vol2.yaml
 
-ORG=3
+ORG=1
 P0PORT=11051
 CAPORT=11054
 PEERPEM=organizations/peerOrganizations/con1.example.com/tlsca/tlsca.con1.example.com-cert.pem
