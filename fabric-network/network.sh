@@ -550,6 +550,9 @@ elif [ "$MODE" == "restart" ]; then
 elif [ "$MODE" == "deployCC" ]; then
   echo "deploying chaincode on channel '${CHANNEL_NAME}'"
   echo
+elif [ "$MODE" == "start" ]; then
+  echo "Starting Foreset Of Volenteer"
+  echo
 else
   printHelp
   exit 1
