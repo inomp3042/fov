@@ -5,8 +5,8 @@ fabric-network/organizations/ordererOrganizations/
 fabric-network/organizations/peerOrganizations/
 fabric-network/system-genesis-block/
 
-# fov nodejs
-chaincode/fov/javascript/node_modules/
+# nodejs
+node_modules/
 
 # fabric server files
 fov.tar.gz
