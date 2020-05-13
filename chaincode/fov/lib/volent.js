@@ -2,6 +2,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const crypto = require('crypto');
 
 class Volenteer extends Contract {
 
@@ -30,19 +31,31 @@ class Volenteer extends Contract {
 
         for (let i = 0; i < volents.length; i++) {
             volents[i].docType = 'volent';
-            await ctx.stub.putState('VOLENT' + i, Buffer.from(JSON.stringify(volents[i])));
+
+            const key = this.createKey(ctx, 'VOLENT', volents[i]);
+            await ctx.stub.putState(key, Buffer.from(JSON.stringify(volents[i])));
             console.info('Added <--> ', volents[i]);
         }
         console.info('============= END : Initialize Ledger ===========');
     }
 
     async queryVolent(ctx, volentNumber) {
-        const volentAsBytes = await ctx.stub.getState(volentNumber); // get the volent from chaincode state
-        if (!volentAsBytes || volentAsBytes.length === 0) {
-            throw new Error(`${volentNumber} does not exist`);
+        const allResults = [];
+        for await (const {key, value} of ctx.stub.getStateByPartialCompositeKey('string', ["VOLENT",volentNumber.toString('utf8')])) {
+            if (!value)
+                continue;
+            const strValue = Buffer.from(value).toString('utf8');
+            let record;
+            try {
+                record = JSON.parse(strValue);
+            } catch (err) {
+                console.log(err);
+                record = strValue;
+            }
+            allResults.push({ Key: key, Record: record });
         }
-        console.log(volentAsBytes.toString());
-        return volentAsBytes.toString();
+        console.info(allResults);
+        return JSON.stringify(allResults);
     }
 
     async createVolent(ctx, volentNumber, time, date, service, certi) {
@@ -56,15 +69,16 @@ class Volenteer extends Contract {
             certi,
         };
 
-        await ctx.stub.putState(volentNumber, Buffer.from(JSON.stringify(volent)));
+        const key = this.createKey(ctx, "VOLENT", volent);
+        await ctx.stub.putState(key, Buffer.from(JSON.stringify(volent)));
         console.info('============= END : Create Volent ===========');
     }
 
     async queryAllVolents(ctx) {
-        const startKey = 'VOLENT0';
-        const endKey = 'VOLENT999';
         const allResults = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+        for await (const {key, value} of ctx.stub.getStateByPartialCompositeKey('string', ["VOLENT"])) {
+            if (!value)
+                continue;
             const strValue = Buffer.from(value).toString('utf8');
             let record;
             try {
@@ -93,6 +107,11 @@ class Volenteer extends Contract {
         console.info('============= END : changeCarOwner ===========');
     }
 */
+    createKey(ctx, number, data) {
+        let hashValue = crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex').toString('utf8');
+        let certi = data.certi.toString('utf8');
+        return ctx.stub.createCompositeKey('string', [number.toString('utf8'), certi, hashValue ]);
+    }
 }
 
 module.exports = Volenteer;
