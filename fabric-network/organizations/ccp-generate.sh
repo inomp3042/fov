@@ -57,7 +57,7 @@ echo "$(yaml_ccp $ORG $P0PORT $CAPORT $PEERPEM $CAPEM)" > organizations/peerOrga
 
 ORG=2
 P0PORT=9051
-CAPORT=8054
+CAPORT=7054
 PEERPEM=organizations/peerOrganizations/vol2.example.com/tlsca/tlsca.vol2.example.com-cert.pem
 CAPEM=organizations/peerOrganizations/vol2.example.com/ca/ca.vol2.example.com-cert.pem
 
@@ -66,7 +66,7 @@ echo "$(yaml_ccp $ORG $P0PORT $CAPORT $PEERPEM $CAPEM)" > organizations/peerOrga
 
 ORG=1
 P0PORT=11051
-CAPORT=11054
+CAPORT=7054
 PEERPEM=organizations/peerOrganizations/con1.example.com/tlsca/tlsca.con1.example.com-cert.pem
 CAPEM=organizations/peerOrganizations/con1.example.com/ca/ca.con1.example.com-cert.pem
 

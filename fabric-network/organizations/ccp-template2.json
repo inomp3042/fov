@@ -18,7 +18,7 @@
                 "peer0.con${ORG}.example.com"
             ],
             "certificateAuthorities": [
-                "ca.con${ORG}.example.com"
+                "ca.vol1.example.com"
             ]
         }
     },
@@ -35,9 +35,9 @@
         }
     },
     "certificateAuthorities": {
-        "ca.con${ORG}.example.com": {
+        "ca.vol1.example.com": {
             "url": "https://localhost:${CAPORT}",
-            "caName": "ca-con${ORG}",
+            "caName": "ca-vol1",
             "tlsCACerts": {
                 "pem": "${CAPEM}"
             },
